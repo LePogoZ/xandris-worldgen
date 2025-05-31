@@ -66,13 +66,26 @@ def process_seed(seed):
     results = resolve_20_digit_seed(df, seed)
     return world_type, results
 
-def test_run():
-    # Example run
-    seed = random.randint(0, 10**20 - 1)
-    world_type, successes = process_seed(seed)
-    print(f"Seed: {seed}")
-    print(f"World type: {world_type}")
-    print(f"Success counts: {successes}")
+def process_60_digit_seed(seed_60_digit):
+    seed_str = str(seed_60_digit).zfill(60)
+    subseeds = [
+        seed_str[0:20],
+        seed_str[10:30],
+        seed_str[20:40],
+        seed_str[30:50],
+        seed_str[40:60]
+    ]
 
-test_run()
+    results = []
+    for subseed_str in subseeds:
+        subseed_int = int(subseed_str)
+        world_type, successes = process_seed(subseed_int)
+        results.append((world_type, successes))
 
+    return results
+
+seed_60 = random.randint(0, 10**60 - 1)
+worlds = process_60_digit_seed(seed_60)
+
+for i, (world_type, successes) in enumerate(worlds, start=1):
+    print(f"Subseed {i}: World type = {world_type}, Successes = {successes}")
