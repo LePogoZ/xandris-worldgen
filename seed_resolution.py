@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import random
 
@@ -60,7 +61,8 @@ def process_seed(seed):
         return world_type,[0,0,0,0,0,0,0,1]
     
     # Load corresponding CSV
-    df = pd.read_csv(f"system_tables/{world_type}.csv", index_col=0)
+    csv_path = os.path.join(os.path.dirname(__file__), "system_tables", f"{world_type}.csv")
+    df = pd.read_csv(csv_path, index_col=0)
     
     # Resolve successes
     results = resolve_20_digit_seed(df, seed)
@@ -84,8 +86,8 @@ def process_60_digit_seed(seed_60_digit):
 
     return results
 
-seed_60 = random.randint(0, 10**60 - 1)
-worlds = process_60_digit_seed(seed_60)
-
-for i, (world_type, successes) in enumerate(worlds, start=1):
-    print(f"Subseed {i}: World type = {world_type}, Successes = {successes}")
+if __name__ == "__main__":
+    seed_60 = random.randint(0, 10**60 - 1)
+    worlds = process_60_digit_seed(seed_60)
+    for i, (world_type, successes) in enumerate(worlds, start=1):
+        print(f"Subseed {i}: World type = {world_type}, Successes = {successes}")
