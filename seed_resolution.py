@@ -2,6 +2,7 @@ import pandas as pd
 import random
 import json
 import re
+import base64
 from namegen import generate_name, generate_system_name
 
 # Maps seed prefixes (int ranges) to world type CSV names
@@ -86,6 +87,12 @@ def process_seed(seed):
     results = resolve_planet_seed(df, seed)
     return world_type, results
 
+
+def encode_seed_base64(seed_32_digit):
+    # Convert integer seed to bytes, then to base64 string
+    seed_bytes = int(seed_32_digit).to_bytes(15, byteorder='big')
+    return base64.b64encode(seed_bytes).decode('utf-8')
+
 def process_system_seed(seed_32_digit):
     seed_str = str(seed_32_digit).zfill(32)
     subseeds = [
@@ -111,7 +118,7 @@ def process_system_seed(seed_32_digit):
             planets.append(planet)
 
     return {
-        "system_seed": seed_32_digit,
+        "system_seed": encode_seed_base64(seed_32_digit),
         "system_name": system_name,
         "system_planets": planets if planets else [{"planet_name": None, "planet_type": "None", "planet_resources": []}]
     }
