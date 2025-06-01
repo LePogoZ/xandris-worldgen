@@ -57,7 +57,7 @@ def process_seed(seed):
     if world_type == "Null":
         return world_type, [0,0,0,0,0,0,0,0]
     if world_type == "Barred":
-        return world_type,[0,0,0,0,0,0,0,1]
+        return world_type,[0,0,0,0,0,0,0,2]
     
     # Load corresponding CSV
     df = pd.read_csv(f"system_tables/{world_type}.csv", index_col=0)
