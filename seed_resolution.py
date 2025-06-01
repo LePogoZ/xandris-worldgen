@@ -1,5 +1,8 @@
 import pandas as pd
 import random
+import json
+import re
+from namegen import generate_name, generate_system_name
 
 # Maps seed prefixes (int ranges) to world type CSV names
 world_type_map = {
@@ -15,6 +18,23 @@ world_type_map = {
     "Barred": (250, 250),
     "Null": (251, 999)
 }
+
+def main():
+    seed_60 = random.randint(0, 10**60 - 1)
+    worlds = process_60_digit_seed(seed_60)
+
+    json_str = json.dumps(worlds, indent=2)
+
+    # Fix for compacting the planet_resources list to one line correctly
+    json_str = re.sub(
+        r'"planet_resources": \[\s+([^]]+?)\s+\]',
+        lambda m: f'''"planet_resources": [{", ".join(
+            line.strip().rstrip(',') for line in m.group(1).splitlines() if line.strip().strip(',') != ""
+        )}]''',
+        json_str
+    )
+
+    print(json_str)
 
 def get_world_type_from_seed(seed, world_type_map):
     seed_str = str(seed).zfill(20)
@@ -76,16 +96,25 @@ def process_60_digit_seed(seed_60_digit):
         seed_str[40:60]
     ]
 
-    results = []
+    system_name = generate_system_name()
+    planets = []
+
     for subseed_str in subseeds:
         subseed_int = int(subseed_str)
-        world_type, successes = process_seed(subseed_int)
-        results.append((world_type, successes))
+        world_type, resources = process_seed(subseed_int)
+        if world_type != "Null":
+            planet = {
+                "planet_name": generate_name(world_type),
+                "planet_type": world_type,
+                "planet_resources": resources
+            }
+            planets.append(planet)
 
-    return results
+    return {
+        "system_seed": seed_60_digit,
+        "system_name": system_name,
+        "system_planets": planets if planets else [{"planet_name": None, "planet_type": "None", "planet_resources": []}]
+    }
 
-seed_60 = random.randint(0, 10**60 - 1)
-worlds = process_60_digit_seed(seed_60)
-
-for i, (world_type, successes) in enumerate(worlds, start=1):
-    print(f"Subseed {i}: World type = {world_type}, Successes = {successes}")
+if __name__ == "__main__":
+    main()

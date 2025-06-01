@@ -2,10 +2,11 @@ import random
 from name_components import themes
 
 def main():
-    print_planet_name_examples()
+    '''print_planet_name_examples()
     print("Systems: ", end ="")
     for i in range(10):
-        print(f"{generate_system_name()}, ", end="")
+        print(f"{generate_system_name()}, ", end="")'''
+    print(generate_name("Abundant"))
         
 
 def starts_with_vowel(s):
@@ -31,39 +32,25 @@ def generate_name(world_type: str, count: int = 1):
         if random.random() < 0.25:
             middle = random.choice(theme["middle_parts"])
 
-            # Avoid duplicate vowels at prefix-middle boundary
             if is_duplicate_vowel_boundary(prefix, middle):
-                middle = middle[1:]  # Drop first vowel of middle
-            # Decide vowel between prefix and middle
-            if ends_with_vowel(prefix) or starts_with_vowel(middle):
-                vowel1 = ''
-            else:
-                vowel1 = random.choice(['a', 'e', 'i', 'o', 'u'])
+                middle = middle[1:]
+            vowel1 = '' if ends_with_vowel(prefix) or starts_with_vowel(middle) else random.choice(['a', 'e', 'i', 'o', 'u'])
 
-            # Avoid duplicate vowels at middle-suffix boundary
             if is_duplicate_vowel_boundary(middle, suffix):
-                suffix = suffix[1:]  # Drop first vowel of suffix
-            # Decide vowel between middle and suffix
-            if ends_with_vowel(middle) or starts_with_vowel(suffix):
-                vowel2 = ''
-            else:
-                vowel2 = random.choice(['a', 'e', 'i', 'o', 'u'])
+                suffix = suffix[1:]
+            vowel2 = '' if ends_with_vowel(middle) or starts_with_vowel(suffix) else random.choice(['a', 'e', 'i', 'o', 'u'])
 
             name = prefix + vowel1 + middle + vowel2 + suffix
         else:
-            # No middle part
             if is_duplicate_vowel_boundary(prefix, suffix):
-                suffix = suffix[1:]  # Drop first vowel of suffix
-            if ends_with_vowel(prefix) or starts_with_vowel(suffix):
-                vowel = ''
-            else:
-                vowel = random.choice(['a', 'e', 'i', 'o', 'u'])
+                suffix = suffix[1:]
+            vowel = '' if ends_with_vowel(prefix) or starts_with_vowel(suffix) else random.choice(['a', 'e', 'i', 'o', 'u'])
 
             name = prefix + vowel + suffix
 
         names.append(name)
 
-    return names
+    return names[0] if count == 1 else names
 
 def generate_system_name():
     prefix = random.choice(themes["System"]["prefixes"])

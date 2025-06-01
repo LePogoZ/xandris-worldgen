@@ -3,6 +3,9 @@ import pandas as pd
 
 indexes = ["Resources", "Food (S)", "Food (W)", "Ore (S)", "Ore (W)", "Oil (S)", "Oil (W)", "Titanium", "Xanium"]
 
+def main():
+    generate_and_export_named_dfs(value_sets)
+
 def binomial_probabilities(n, p):
     return [comb(n, k) * (p ** k) * ((1 - p) ** (n - k)) for k in range(n + 1)]
 
@@ -50,4 +53,5 @@ value_sets = [
     ["Radiant", 0, 0, 0, 0, 0, 0, 400, 0]
 ]
 
-generate_and_export_named_dfs(value_sets)
+if __name__ == "__main__":
+    main()
