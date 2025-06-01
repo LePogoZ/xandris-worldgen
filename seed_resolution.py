@@ -20,8 +20,8 @@ world_type_map = {
 }
 
 def main():
-    seed_60 = random.randint(0, 10**60 - 1)
-    worlds = process_60_digit_seed(seed_60)
+    seed_32 = random.randint(0, 10**32 - 1)
+    worlds = process_system_seed(seed_32)
 
     json_str = json.dumps(worlds, indent=2)
 
@@ -52,7 +52,7 @@ def get_success_from_roll(df_column, value):
             return k
     return cdf.index[-1]
 
-def resolve_20_digit_seed(df, seed):
+def resolve_planet_seed(df, seed):
     """
     Given a DataFrame and a 20-digit seed,
     returns a list of 8 success values based on slices of the seed.
@@ -83,17 +83,17 @@ def process_seed(seed):
     df = pd.read_csv(f"system_tables/{world_type}.csv", index_col=0)
     
     # Resolve successes
-    results = resolve_20_digit_seed(df, seed)
+    results = resolve_planet_seed(df, seed)
     return world_type, results
 
-def process_60_digit_seed(seed_60_digit):
-    seed_str = str(seed_60_digit).zfill(60)
+def process_system_seed(seed_32_digit):
+    seed_str = str(seed_32_digit).zfill(32)
     subseeds = [
-        seed_str[0:20],
-        seed_str[10:30],
-        seed_str[20:40],
-        seed_str[30:50],
-        seed_str[40:60]
+        seed_str[0:20],   # 20-digit subseeds starting at 0:20 with 3 digit offsets
+        seed_str[3:23],
+        seed_str[6:26],
+        seed_str[9:29],
+        seed_str[12:32]
     ]
 
     system_name = generate_system_name()
@@ -111,7 +111,7 @@ def process_60_digit_seed(seed_60_digit):
             planets.append(planet)
 
     return {
-        "system_seed": seed_60_digit,
+        "system_seed": seed_32_digit,
         "system_name": system_name,
         "system_planets": planets if planets else [{"planet_name": None, "planet_type": "None", "planet_resources": []}]
     }
